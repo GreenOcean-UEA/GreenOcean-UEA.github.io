@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: 'GreenOcean-UEA/PlankTOM-NEMO-V5'
-          token: ${{ secret.PLANKTOM_TOKEN }}
+          token: ${{ secrets.PLANKTOM_TOKEN }}
 
       - name: Render Docs
         id: build
