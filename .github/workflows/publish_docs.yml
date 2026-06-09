@@ -1,0 +1,43 @@
+name: Publish Documentation
+
+on:
+  pull_request:
+    branches: [ "main" ]
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          repository: 'GreenOcean-UEA/PlankTOM-NEMO-V5'
+          token: ${{ secret.PLANKTOM_TOKEN }}
+
+      - name: Render Docs
+        id: build
+        run: |
+          cd docs
+          pip3 install -r requirements.txt
+          make html
+
+      - name: Upload static files as artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: docs/_build/html/
+  deploy:
+    needs: build
+    permissions:
+      pages: write
+      id-token: write
+    runs-on: ubuntu-latest
+    environment:
+      name: PlankTOM-NEMO5-docs
+      url: https://greenocean-uea.github.io/PlankTOM-NEMO5-docs
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5
