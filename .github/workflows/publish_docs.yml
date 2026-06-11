@@ -36,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: PlankTOM-NEMO5-docs
-      url: https://greenocean-uea.github.io/PlankTOM-NEMO5-docs
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
