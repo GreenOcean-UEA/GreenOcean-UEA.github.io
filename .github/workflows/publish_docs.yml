@@ -5,6 +5,16 @@ on:
     branches: [ "main" ]
   push:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "PlankTOM-NEMO-V5 branch, tag or commit to build"
+        required: true
+        default: "main"
+      deploy:
+        description: "Publish to GitHub Pages (replaces the live docs)"
+        type: boolean
+        default: false
 
 jobs:
   build:
@@ -15,6 +25,8 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: 'GreenOcean-UEA/PlankTOM-NEMO-V5'
+          # Manual runs build the chosen ref; push/PR runs build main as before
+          ref: ${{ inputs.ref || 'main' }}
           token: ${{ secrets.PLANKTOM_TOKEN }}
 
       - name: Render Docs
@@ -30,6 +42,8 @@ jobs:
           path: docs/_build/html/
   deploy:
     needs: build
+    # Manual runs only publish when the "deploy" box is ticked
+    if: github.event_name != 'workflow_dispatch' || inputs.deploy
     permissions:
       pages: write
       id-token: write
